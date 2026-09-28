@@ -316,9 +316,10 @@ section { padding: 100px 0; }
 }
 
 @media(max-width: 900px) {
-  .hero-inner { grid-template-columns: 1fr; text-align: center; gap: 2rem; padding: 2.5rem 0 2rem; }
+  .hero-inner { grid-template-columns: 1fr; text-align: center; gap: 3.5rem; padding: 2.5rem 0 3.5rem; }
   .hero-left   { align-items: center; }
-  .hero-video-wrap, .hero-canvas-wrap { max-width: 290px; }
+  .hero-right  { width: 100%; margin-top: 2.4rem; margin-bottom: 2rem; }
+  .hero-video-wrap, .hero-canvas-wrap { max-width: 280px; }
   .hero-pills, .hero-cta { justify-content: center; }
   .hero-eyebrow { margin: 0 auto 1.5rem; }
   .hero-desc { text-align: left; }
@@ -335,7 +336,7 @@ section { padding: 100px 0; }
   box-shadow: 0 0 0 1px var(--border), 0 24px 64px rgba(0, 0, 0, .7), 0 0 60px rgba(212, 175, 55, 0.12);
 }
 .photo-frame img {
-  width: 100%; display: block; border-radius: var(--r-lg);
+  width: 100%; height: auto; display: block; border-radius: var(--r-lg);
   filter: saturate(1.05) contrast(1.03);
 }
 .photo-frame::after {
@@ -398,9 +399,12 @@ section { padding: 100px 0; }
 .edu-crd-meta .score { color: var(--emerald); font-weight: 600; }
 
 @media(max-width: 900px) {
-  .about-grid { grid-template-columns: 1fr; }
-  .photo-card { max-width: 230px; margin: 0 auto; }
+  .about-grid { grid-template-columns: 1fr; gap: 2.8rem; }
+  .photo-card { width: 100%; max-width: 340px; margin: 0 auto; }
   .interests { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width: 480px) {
+  .photo-card { width: 100%; max-width: 320px; }
 }
 @media(max-width: 640px) { .interests { grid-template-columns: 1fr; } .about-stats { grid-template-columns: 1fr 1fr; } }
 
