@@ -436,6 +436,7 @@ section { padding: 100px 0; }
 .proj-emoji { position: relative; z-index: 1; }
 .v-campus  { background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(229, 192, 123, 0.14)); }
 .v-emotion { background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(16, 185, 129, 0.1)); }
+.v-remote  { background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(245, 158, 11, 0.12)); }
 .v-nclips  { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(212, 175, 55, 0.12)); }
 .proj-body { padding: 1.45rem; flex: 1; display: flex; flex-direction: column; gap: .88rem; }
 .proj-hdr { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
@@ -732,10 +733,11 @@ footer {
           Java, Python, and full-stack web development, backed by real production experience.
         </p>
         <p class="about-text reveal d3">
-          I completed a live-project internship at <strong>Inspect, InfoPark</strong>, contributing
-          backend features to <em>Enclips.ai</em> — a live AI-powered English learning application.
-          Working in a real engineering environment gave me direct exposure to production release
-          cycles, team code review, and deployment workflows.
+          I completed a 45-day live-project internship at <strong>Inspect, InfoPark</strong>, contributing
+          to <em>nclips.ai</em> — an AI-powered platform for nursing licensure exam preparation (NCLEX/ECLIPSE) delivering
+          generated video lessons and structured clinical study notes. Serving as a backend team lead during the critical
+          debugging phase, I gained firsthand mastery of how a modern software company operates, from team workflows
+          and architecture to live production release cycles.
         </p>
         <div class="about-stats">
           <div class="astat reveal d1"><div class="astat-num">2+</div><div class="astat-label">Production Projects</div></div>
@@ -843,19 +845,19 @@ footer {
           <div class="exp-card">
             <div class="exp-head">
               <div>
-                <div class="exp-role">Backend Development Intern</div>
+                <div class="exp-role">Backend Team Lead &middot; Live Project Intern</div>
                 <div class="exp-co">Inspect &mdash; InfoPark, Kochi</div>
               </div>
               <span class="exp-date">45 Days &nbsp;|&nbsp; 2026</span>
             </div>
             <div class="exp-project">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/></svg>
-              Project: Enclips.ai
+              Project: nclips.ai
             </div>
             <ul class="exp-bullets">
-              <li>Worked with the backend engineering team on <strong>Enclips.ai</strong>, a live AI-powered English exam preparation application delivering generated videos and structured learning notes to users.</li>
-              <li>Built and debugged backend API endpoints within a live production codebase, shipping features directly to end users.</li>
-              <li>Gained hands-on experience in real-world release cycles, team-based code review, and live-deployment debugging workflows.</li>
+              <li>Served as backend team lead during the critical debugging and integration phase of <strong>nclips.ai</strong> — an AI-powered preparation platform for nursing licensure exams (NCLEX/ECLIPSE) delivering generated video lessons and structured clinical study notes.</li>
+              <li>Mastered the exact operational flow and delivery lifecycle of a modern software company, from architecture planning to live production rollout.</li>
+              <li>Diagnosed complex backend bottlenecks, conducted peer code reviews, and coordinated API debugging workflows across the engineering team.</li>
             </ul>
           </div>
         </div>
@@ -885,8 +887,9 @@ footer {
         <h2 class="freelance-title reveal d1" id="fl-h">Let's Build Something<br>Together</h2>
         <p class="freelance-desc reveal d2">
           I'm available to build custom applications and software based on your requirements — from
-          initial development all the way through to live deployment. Whether it's a web app,
-          backend system, or AI-powered feature, I can take it from idea to production.
+          native Android mobile apps and hardware/utility tools to full-stack web platforms and backend APIs.
+          Whether you need a custom solution built from scratch or deployed to production, I deliver tailored,
+          high-performance systems.
         </p>
         <div class="freelance-cta reveal d3">
           <a href="#contact" class="btn btn-emerald">
@@ -899,6 +902,7 @@ footer {
           </a>
         </div>
         <div class="deploy-row reveal d4">
+          <span class="deploy-badge">Android Studio</span>
           <span class="deploy-badge">Vercel</span>
           <span class="deploy-badge">Render</span>
           <span class="deploy-badge">AWS EC2</span>
@@ -907,6 +911,11 @@ footer {
       </div>
       <div class="freelance-cards reveal d2">
         <div class="fl-card">
+          <div class="fl-card-icon">&#128241;</div>
+          <div class="fl-card-title">Native Android Apps</div>
+          <div class="fl-card-desc">Custom Java/XML mobile apps, IR/hardware controls, and offline utilities engineered for exact specifications.</div>
+        </div>
+        <div class="fl-card">
           <div class="fl-card-icon">&#127760;</div>
           <div class="fl-card-title">Web Applications</div>
           <div class="fl-card-desc">Full-stack web apps with modern backends, responsive UI, and database integration.</div>
@@ -914,12 +923,7 @@ footer {
         <div class="fl-card">
           <div class="fl-card-icon">&#9881;&#65039;</div>
           <div class="fl-card-title">Backend Systems</div>
-          <div class="fl-card-desc">REST APIs, server-side logic, database design, and authentication flows.</div>
-        </div>
-        <div class="fl-card">
-          <div class="fl-card-icon">&#129302;</div>
-          <div class="fl-card-title">AI Features</div>
-          <div class="fl-card-desc">Integrating machine learning models or AI APIs into existing or new applications.</div>
+          <div class="fl-card-desc">REST APIs, server-side logic, database design, and production-tested debugging.</div>
         </div>
         <div class="fl-card">
           <div class="fl-card-icon">&#9729;&#65039;</div>
@@ -1128,15 +1132,21 @@ const PROJECTS = [
     githubUrl: 'https://github.com/aibinjmca2527-dotcom',
   },
   {
-    name: 'Enclips.ai',
-    subtitle: '— Internship Contribution',
-    emoji: '&#129302;',
-    visual: 'v-nclips',
-    description: 'Contributed backend features to Enclips.ai, a live production AI-powered English exam preparation application delivering generated videos and structured learning notes. Built and shipped API endpoints to real users at Inspect, InfoPark.',
+    name: "Tom's Remote",
+    subtitle: '— Native Android IR Fan Controller',
+    emoji: '&#128241;',
+    visual: 'v-remote',
+    description: "A custom native Android application built in pure Java & XML to control an infrared (IR) smart fan when the manufacturer didn't provide an app. Built for my cousin Tom, it communicates directly with IR emitters using ConsumerIrManager — 100% offline with zero external dependencies, custom interactive FanDialView canvas controls, and Google Assistant voice shortcuts.",
     technologies: [
-      { t:'Production App', c:'' }, { t:'AI-Powered', c:'sky' },
-      { t:'Backend APIs', c:'' }, { t:'Live Deployment', c:'em' }
+      { t:'Android (Java)', c:'' }, { t:'XML UI', c:'' }, { t:'ConsumerIrManager', c:'sky' },
+      { t:'Custom Canvas Dial', c:'' }, { t:'Google Assistant', c:'em' }, { t:'Zero Dependencies', c:'' }
     ],
+    features: [
+      'Pure Android framework (no external libraries, completely offline, zero dependencies)',
+      'Custom interactive FanDialView round dial with speed 1–5 & Boost mode',
+      'Google Assistant App Actions integration for voice-controlled fan shortcuts'
+    ],
+    githubUrl: 'https://github.com/aibinjmca2527-dotcom',
   },
 ];
 
