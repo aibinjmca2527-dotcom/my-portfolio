@@ -642,6 +642,7 @@ footer {
     <li><a href="#experience"     class="nav-link">Experience</a></li>
     <li><a href="#freelance"      class="nav-link">Freelance</a></li>
     <li><a href="#education"      class="nav-link">Education</a></li>
+    <li><a href="#certifications" class="nav-link">Certifications</a></li>
     <li><a href="#contact"        class="nav-link">Contact</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
@@ -1019,7 +1020,7 @@ footer {
     <div class="contact-grid">
       <div class="reveal d2">
         <p style="font-size:.88rem;color:var(--muted);line-height:1.8;margin-bottom:1.5rem;">
-          The best way to reach me is via email or LinkedIn. I typically respond within 24 hours.
+          The best way to reach me is via email. I typically respond within 24 hours.
         </p>
         <div class="contact-links">
           <a href="mailto:aibinjoseph9605573691@gmail.com" class="c-link" aria-label="Send email to Aibin Joseph">
@@ -1345,20 +1346,201 @@ function initThree() {
   const pts = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xd4af37, size: .036, transparent: true, opacity: .65 }));
   scene.add(pts);
 
-  // Floating precision orbiters
-  const orbiters = [];
-  if (!mobile) {
-    const shapes = [new THREE.OctahedronGeometry(.12, 0), new THREE.TetrahedronGeometry(.1, 0), new THREE.IcosahedronGeometry(.09, 0)];
-    const colors = [0xd4af37, 0xe5c07b, 0xf59e0b];
-    for (let i = 0; i < 5; i++) {
-      const si = i % 3;
-      const m  = new THREE.Mesh(shapes[si], new THREE.MeshStandardMaterial({
-        color: colors[si], metalness: .95, roughness: .1, emissive: colors[si], emissiveIntensity: .35
-      }));
-      m.userData = { angle: (i / 5) * Math.PI * 2, radius: 1.9 + Math.random() * .5, speed: .35 + Math.random() * .25, yOff: (Math.random() - .5) * .6 };
-      scene.add(m); orbiters.push(m);
+  // Helper: Generate crisp circular glass badges for 4 AI logos (Claude, Gemini, ChatGPT, Antigravity)
+  function createAiBadge(type) {
+    const c = document.createElement('canvas');
+    c.width = 256;
+    c.height = 256;
+    const ctx = c.getContext('2d');
+
+    // Outer subtle golden aura
+    const glow = ctx.createRadialGradient(128, 128, 45, 128, 128, 122);
+    glow.addColorStop(0, 'rgba(212, 175, 55, 0.18)');
+    glow.addColorStop(1, 'rgba(10, 11, 16, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, 256, 256);
+
+    // Circular dark glass badge disc
+    ctx.beginPath();
+    ctx.arc(128, 128, 104, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(16, 18, 26, 0.94)';
+    ctx.fill();
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.65)';
+    ctx.stroke();
+
+    // Delicate inner border ring
+    ctx.beginPath();
+    ctx.arc(128, 128, 97, 0, Math.PI * 2);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.stroke();
+
+    const cx = 128, cy = 110;
+
+    if (type === 'claude') {
+      // Anthropic Claude — iconic coral/gold sunburst asterisk
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.strokeStyle = '#d97757';
+      ctx.fillStyle = '#e5b95c';
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4;
+        const len = (i % 2 === 0) ? 36 : 26;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(a) * len, Math.sin(a) * len);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(Math.cos(a) * (len + 4), Math.sin(a) * (len + 4), 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.arc(0, 0, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#d97757';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.font = "bold 22px 'JetBrains Mono', monospace";
+      ctx.fillStyle = '#fdfdfd';
+      ctx.textAlign = 'center';
+      ctx.fillText('Claude', 128, 195);
     }
+    else if (type === 'gemini') {
+      // Google Gemini — 4-pointed curved star with electric gradient
+      ctx.save();
+      ctx.translate(cx, cy);
+      const grad = ctx.createLinearGradient(-42, -42, 42, 42);
+      grad.addColorStop(0, '#38bdf8');
+      grad.addColorStop(0.5, '#818cf8');
+      grad.addColorStop(1, '#e5b95c');
+      ctx.fillStyle = grad;
+
+      ctx.beginPath();
+      const R = 44;
+      ctx.moveTo(0, -R);
+      ctx.quadraticCurveTo(0, 0, R, 0);
+      ctx.quadraticCurveTo(0, 0, 0, R);
+      ctx.quadraticCurveTo(0, 0, -R, 0);
+      ctx.quadraticCurveTo(0, 0, 0, -R);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.font = "bold 22px 'JetBrains Mono', monospace";
+      ctx.fillStyle = '#fdfdfd';
+      ctx.textAlign = 'center';
+      ctx.fillText('Gemini', 128, 195);
+    }
+    else if (type === 'chatgpt') {
+      // OpenAI / ChatGPT — 6-loop hexagonal knot
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 4.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      for (let i = 0; i < 6; i++) {
+        ctx.save();
+        ctx.rotate((i * Math.PI) / 3);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -18);
+        ctx.arcTo(20, -28, 20, 0, 14);
+        ctx.lineTo(8, -4);
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.beginPath();
+      ctx.arc(0, 0, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#10b981';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.font = "bold 22px 'JetBrains Mono', monospace";
+      ctx.fillStyle = '#fdfdfd';
+      ctx.textAlign = 'center';
+      ctx.fillText('ChatGPT', 128, 195);
+    }
+    else if (type === 'antigravity') {
+      // Google Antigravity — inverted quantum levitation symbol
+      ctx.save();
+      ctx.translate(cx, cy);
+      const grad = ctx.createLinearGradient(-35, -35, 35, 35);
+      grad.addColorStop(0, '#e5b95c');
+      grad.addColorStop(1, '#38bdf8');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 4.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const size = 36;
+      ctx.beginPath();
+      ctx.moveTo(0, size);
+      ctx.lineTo(Math.cos(Math.PI / 6) * size, -Math.sin(Math.PI / 6) * size);
+      ctx.lineTo(-Math.cos(Math.PI / 6) * size, -Math.sin(Math.PI / 6) * size);
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 7, 0, Math.PI * 2);
+      ctx.fillStyle = '#e5b95c';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(0, -12);
+      ctx.lineTo(0, -25);
+      ctx.moveTo(-6, -19);
+      ctx.lineTo(0, -25);
+      ctx.lineTo(6, -19);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.font = "bold 20px 'JetBrains Mono', monospace";
+      ctx.fillStyle = '#fdfdfd';
+      ctx.textAlign = 'center';
+      ctx.fillText('Antigravity', 128, 195);
+    }
+
+    return new THREE.CanvasTexture(c);
   }
+
+  // 4 AI Logos Orbiting the Core: Claude, Gemini, ChatGPT, Antigravity
+  const aiTypes = ['claude', 'gemini', 'chatgpt', 'antigravity'];
+  const aiSprites = [];
+  const badgeScale = mobile ? 0.72 : 0.88;
+  const orbitR = mobile ? 1.85 : 2.3;
+
+  aiTypes.forEach((type, idx) => {
+    const tex = createAiBadge(type);
+    tex.needsUpdate = true;
+    const mat = new THREE.SpriteMaterial({
+      map: tex,
+      transparent: true,
+      opacity: 0.95,
+      depthTest: true,
+      depthWrite: false
+    });
+    const sprite = new THREE.Sprite(mat);
+    sprite.scale.set(badgeScale, badgeScale, 1);
+    sprite.userData = {
+      angle: (idx / 4) * Math.PI * 2,
+      baseRadius: orbitR,
+      speed: 0.3,
+      yPhase: idx * (Math.PI / 2)
+    };
+    scene.add(sprite);
+    aiSprites.push(sprite);
+  });
 
   let mx = 0, my = 0;
   if (!reduced) {
@@ -1390,11 +1572,15 @@ function initThree() {
     ring1.rotation.z = t * .3; ring1.rotation.x = t * .15;
     ring2.rotation.z = -t * .2; ring2.rotation.y = t * .1;
     pts.rotation.y = t * .04;
-    orbiters.forEach(o => {
-      o.userData.angle += o.userData.speed * .011;
-      const a = o.userData.angle, r = o.userData.radius;
-      o.position.set(Math.cos(a) * r, o.userData.yOff + Math.sin(a * 1.4) * .35, Math.sin(a) * r * .55);
-      o.rotation.x += .025; o.rotation.y += .018;
+    aiSprites.forEach(sp => {
+      sp.userData.angle += reduced ? 0 : sp.userData.speed * 0.012;
+      const a = sp.userData.angle;
+      const r = sp.userData.baseRadius;
+      const x = Math.cos(a) * r;
+      const z = Math.sin(a) * (r * 0.75);
+      const y = Math.sin(t * 1.25 + sp.userData.yPhase) * 0.28 + (z * 0.15);
+      sp.position.set(x, y, z);
+      sp.material.opacity = z < 0 ? 0.75 : 0.98;
     });
     if (!reduced) {
       camera.position.x += (mx * .5 - camera.position.x) * .05;
