@@ -16,7 +16,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" defer></script>
   <style>
 /* ── DESIGN TOKENS — CLASSIC LUXURY GOLD & OBSIDIAN ──────── */
 :root {
@@ -266,14 +265,38 @@ section { padding: 100px 0; }
 }
 .pill:hover { border-color: var(--gold); color: var(--gold-light); }
 
-/* 3D canvas side */
+/* 3D animated video side */
 .hero-right {
   position: relative; display: flex; align-items: center; justify-content: center;
 }
-.hero-canvas-wrap {
-  position: relative; width: 100%; aspect-ratio: 1; max-width: 500px;
+.hero-video-wrap, .hero-canvas-wrap {
+  position: relative; width: 100%; aspect-ratio: 1; max-width: 440px;
+  display: flex; align-items: center; justify-content: center;
 }
-#hero-canvas { width: 100%; height: 100%; display: block; border-radius: 50%; }
+.hero-video-container {
+  position: relative; width: 100%; height: 100%; border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(212, 175, 55, 0.42);
+  box-shadow: 0 0 38px rgba(212, 175, 55, 0.22), 0 20px 50px rgba(0, 0, 0, 0.7);
+  background: var(--bg);
+  transform: translateZ(0);
+  transition: transform var(--t) var(--ease), box-shadow var(--t) var(--ease), border-color var(--t) var(--ease);
+}
+.hero-video-wrap:hover .hero-video-container {
+  transform: scale(1.02);
+  border-color: rgba(212, 175, 55, 0.7);
+  box-shadow: 0 0 52px rgba(212, 175, 55, 0.35), 0 24px 56px rgba(0, 0, 0, 0.75);
+}
+.hero-video {
+  width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;
+  pointer-events: none;
+}
+.hero-video-gloss {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.12) 0%, transparent 55%),
+              radial-gradient(circle at 50% 50%, transparent 75%, rgba(10, 11, 16, 0.45) 100%);
+  box-shadow: inset 0 0 24px rgba(10, 11, 16, 0.6), inset 0 0 10px rgba(212, 175, 55, 0.3);
+}
 .hero-ring {
   position: absolute; border-radius: 50%; border: 1px solid;
   top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -295,7 +318,7 @@ section { padding: 100px 0; }
 @media(max-width: 900px) {
   .hero-inner { grid-template-columns: 1fr; text-align: center; gap: 2rem; padding: 2.5rem 0 2rem; }
   .hero-left   { align-items: center; }
-  .hero-canvas-wrap { max-width: 290px; }
+  .hero-video-wrap, .hero-canvas-wrap { max-width: 290px; }
   .hero-pills, .hero-cta { justify-content: center; }
   .hero-eyebrow { margin: 0 auto 1.5rem; }
   .hero-desc { text-align: left; }
@@ -697,8 +720,13 @@ footer {
         </div>
       </div>
       <div class="hero-right" aria-hidden="true">
-        <div class="hero-canvas-wrap">
-          <canvas id="hero-canvas"></canvas>
+        <div class="hero-video-wrap">
+          <div class="hero-video-container">
+            <video id="hero-video" class="hero-video" autoplay loop muted playsinline webkit-playsinline disablepictureinpicture disableremoteplayback preload="auto">
+              <source src="animation.mp4" type="video/mp4" />
+            </video>
+            <div class="hero-video-gloss"></div>
+          </div>
           <div class="hero-ring hero-ring-1"></div>
           <div class="hero-ring hero-ring-2"></div>
           <div class="hero-ring hero-ring-3"></div>
@@ -1293,274 +1321,63 @@ form.addEventListener('submit', async e => {
   }
 });
 
-/* ── 9. THREE.JS 3D SCENE (CLASSIC GOLD & OBSIDIAN) ──────── */
-function initThree() {
-  const canvas = document.getElementById('hero-canvas');
-  if (!canvas || typeof THREE === 'undefined') return;
-  const mobile  = window.innerWidth < 900;
-  const reduced = prefersReduced();
-  const wrap    = canvas.parentElement;
-  const W = wrap.offsetWidth || 480, H = wrap.offsetHeight || 480;
+/* ── 9. HERO 3D VIDEO INTEGRATION (COMPLETELY SILENT & RESPONSIVE) ──────── */
+function initHeroVideo() {
+  const video = document.getElementById('hero-video');
+  if (!video) return;
 
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !mobile, powerPreference: 'low-power' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1 : 1.5));
-  renderer.setSize(W, H);
-  renderer.setClearColor(0x000000, 0);
+  // Strict silent audio enforcement
+  video.muted = true;
+  video.defaultMuted = true;
+  video.volume = 0;
 
-  const scene  = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(55, 1, .1, 100);
-  camera.position.set(0, 0, 4.5);
-
-  // Warm Classic Lights
-  scene.add(new THREE.AmbientLight(0x141108, 1.8));
-  const pl1 = new THREE.PointLight(0xd4af37, 4.2, 18); pl1.position.set(2.5, 3.5, 3); scene.add(pl1);
-  const pl2 = new THREE.PointLight(0xe5c07b, 3.0, 16); pl2.position.set(-3, -1.5, 2.5); scene.add(pl2);
-  const pl3 = new THREE.PointLight(0xf59e0b, 2.0, 14); pl3.position.set(0, -3, 1.5); scene.add(pl3);
-
-  // Central polyhedral core in obsidian titanium with warm gold highlights
-  const geoCore  = new THREE.IcosahedronGeometry(.92, 1);
-  const meshCore = new THREE.Mesh(geoCore, new THREE.MeshStandardMaterial({
-    color: 0x10121a, metalness: .94, roughness: .12, emissive: 0xd4af37, emissiveIntensity: .14
-  }));
-  const meshWire = new THREE.Mesh(geoCore, new THREE.MeshBasicMaterial({
-    color: 0xd4af37, wireframe: true, transparent: true, opacity: .32
-  }));
-  scene.add(meshCore); scene.add(meshWire);
-
-  // Classic Precision Orbital Rings
-  const matRing1 = new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: .45 });
-  const matRing2 = new THREE.MeshBasicMaterial({ color: 0xe5c07b, transparent: true, opacity: .28 });
-  const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.5, .014, 8, 90), matRing1); scene.add(ring1);
-  const ring2 = new THREE.Mesh(new THREE.TorusGeometry(1.85, .009, 6, 90), matRing2);
-  ring2.rotation.x = Math.PI * .35; scene.add(ring2);
-
-  // Warm Gold Stardust Particles
-  const cnt = mobile ? 50 : 120;
-  const pGeo = new THREE.BufferGeometry();
-  const pos  = new Float32Array(cnt * 3);
-  for (let i = 0; i < cnt * 3; i++) pos[i] = (Math.random() - .5) * 8.5;
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  const pts = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xd4af37, size: .036, transparent: true, opacity: .65 }));
-  scene.add(pts);
-
-  // Helper: Generate crisp circular glass badges for 4 AI logos (Claude, Gemini, ChatGPT, Antigravity)
-  function createAiBadge(type) {
-    const c = document.createElement('canvas');
-    c.width = 256;
-    c.height = 256;
-    const ctx = c.getContext('2d');
-
-    // Outer subtle golden aura
-    const glow = ctx.createRadialGradient(128, 128, 45, 128, 128, 122);
-    glow.addColorStop(0, 'rgba(212, 175, 55, 0.18)');
-    glow.addColorStop(1, 'rgba(10, 11, 16, 0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, 256, 256);
-
-    // Circular dark glass badge disc
-    ctx.beginPath();
-    ctx.arc(128, 128, 104, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(16, 18, 26, 0.94)';
-    ctx.fill();
-    ctx.lineWidth = 3.5;
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.65)';
-    ctx.stroke();
-
-    // Delicate inner border ring
-    ctx.beginPath();
-    ctx.arc(128, 128, 97, 0, Math.PI * 2);
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.stroke();
-
-    const cx = 128, cy = 110;
-
-    if (type === 'claude') {
-      // Anthropic Claude — iconic coral/gold sunburst asterisk
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.strokeStyle = '#d97757';
-      ctx.fillStyle = '#e5b95c';
-      ctx.lineWidth = 5;
-      ctx.lineCap = 'round';
-      for (let i = 0; i < 8; i++) {
-        const a = (i * Math.PI) / 4;
-        const len = (i % 2 === 0) ? 36 : 26;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(Math.cos(a) * len, Math.sin(a) * len);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(Math.cos(a) * (len + 4), Math.sin(a) * (len + 4), 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.beginPath();
-      ctx.arc(0, 0, 8, 0, Math.PI * 2);
-      ctx.fillStyle = '#d97757';
-      ctx.fill();
-      ctx.restore();
-
-      ctx.font = "bold 22px 'JetBrains Mono', monospace";
-      ctx.fillStyle = '#fdfdfd';
-      ctx.textAlign = 'center';
-      ctx.fillText('Claude', 128, 195);
+  // Autoplay attempt with interactive fallback
+  const startPlay = () => {
+    video.muted = true;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        const retryOnInteraction = () => {
+          video.muted = true;
+          video.play().catch(() => {});
+          window.removeEventListener('click', retryOnInteraction);
+          window.removeEventListener('touchstart', retryOnInteraction);
+          window.removeEventListener('scroll', retryOnInteraction);
+        };
+        window.addEventListener('click', retryOnInteraction, { once: true });
+        window.addEventListener('touchstart', retryOnInteraction, { once: true });
+        window.addEventListener('scroll', retryOnInteraction, { once: true });
+      });
     }
-    else if (type === 'gemini') {
-      // Google Gemini — 4-pointed curved star with electric gradient
-      ctx.save();
-      ctx.translate(cx, cy);
-      const grad = ctx.createLinearGradient(-42, -42, 42, 42);
-      grad.addColorStop(0, '#38bdf8');
-      grad.addColorStop(0.5, '#818cf8');
-      grad.addColorStop(1, '#e5b95c');
-      ctx.fillStyle = grad;
+  };
 
-      ctx.beginPath();
-      const R = 44;
-      ctx.moveTo(0, -R);
-      ctx.quadraticCurveTo(0, 0, R, 0);
-      ctx.quadraticCurveTo(0, 0, 0, R);
-      ctx.quadraticCurveTo(0, 0, -R, 0);
-      ctx.quadraticCurveTo(0, 0, 0, -R);
-      ctx.closePath();
-      ctx.fill();
+  startPlay();
 
-      ctx.beginPath();
-      ctx.arc(0, 0, 6, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
-      ctx.restore();
-
-      ctx.font = "bold 22px 'JetBrains Mono', monospace";
-      ctx.fillStyle = '#fdfdfd';
-      ctx.textAlign = 'center';
-      ctx.fillText('Gemini', 128, 195);
-    }
-    else if (type === 'chatgpt') {
-      // EXACT Official OpenAI / ChatGPT Logo via SVG Path2D
-      ctx.save();
-      const scale = 3.35;
-      ctx.translate(cx - 12 * scale, cy - 12 * scale);
-      ctx.scale(scale, scale);
-
-      const grad = ctx.createLinearGradient(0, 0, 24, 24);
-      grad.addColorStop(0, '#10a37f');
-      grad.addColorStop(1, '#34d399');
-      ctx.fillStyle = grad;
-
-      const path = new Path2D('M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z');
-      ctx.fill(path);
-      ctx.restore();
-
-      ctx.font = "bold 22px 'JetBrains Mono', monospace";
-      ctx.fillStyle = '#fdfdfd';
-      ctx.textAlign = 'center';
-      ctx.fillText('ChatGPT', 128, 195);
-    }
-    else if (type === 'antigravity') {
-      // EXACT Official Google Antigravity Logo via SVG Path2D
-      ctx.save();
-      const scale = 0.58;
-      ctx.translate(cx - 90 * scale, cy - 91 * scale);
-      ctx.scale(scale, scale);
-
-      const grad = ctx.createLinearGradient(30, 30, 150, 150);
-      grad.addColorStop(0, '#4285F4'); // Google Blue
-      grad.addColorStop(0.5, '#A855F7'); // Purple
-      grad.addColorStop(1, '#F59E0B'); // Warm Amber Gold
-      ctx.fillStyle = grad;
-
-      const path = new Path2D('M144.248 149.062c7.5 5.626 18.75 1.876 8.437-8.437-30.937-30-24.375-112.5-62.812-112.5-38.438 0-31.875 82.5-62.813 112.5-11.25 11.25.938 14.063 8.438 8.437 29.062-19.687 27.187-54.375 54.375-54.375 27.187 0 25.312 34.688 54.375 54.375Z');
-      ctx.fill(path);
-      ctx.restore();
-
-      ctx.font = "bold 20px 'JetBrains Mono', monospace";
-      ctx.fillStyle = '#fdfdfd';
-      ctx.textAlign = 'center';
-      ctx.fillText('Antigravity', 128, 195);
-    }
-
-    return new THREE.CanvasTexture(c);
+  // Performance optimization: Pause video when scrolled out of viewport
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.1 });
+    observer.observe(video);
   }
 
-  // 4 AI Logos Orbiting the Core: Claude, Gemini, ChatGPT, Antigravity
-  const aiTypes = ['claude', 'gemini', 'chatgpt', 'antigravity'];
-  const aiSprites = [];
-  const badgeScale = mobile ? 0.72 : 0.88;
-  const orbitR = mobile ? 1.85 : 2.3;
-
-  aiTypes.forEach((type, idx) => {
-    const tex = createAiBadge(type);
-    tex.needsUpdate = true;
-    const mat = new THREE.SpriteMaterial({
-      map: tex,
-      transparent: true,
-      opacity: 0.95,
-      depthTest: true,
-      depthWrite: false
-    });
-    const sprite = new THREE.Sprite(mat);
-    sprite.scale.set(badgeScale, badgeScale, 1);
-    sprite.userData = {
-      angle: (idx / 4) * Math.PI * 2,
-      baseRadius: orbitR,
-      speed: 0.3,
-      yPhase: idx * (Math.PI / 2)
-    };
-    scene.add(sprite);
-    aiSprites.push(sprite);
+  // Guard to guarantee video remains 100% silent at all times
+  video.addEventListener('volumechange', () => {
+    if (!video.muted || video.volume > 0) {
+      video.muted = true;
+      video.volume = 0;
+    }
   });
-
-  let mx = 0, my = 0;
-  if (!reduced) {
-    window.addEventListener('mousemove', e => {
-      const rect = wrap.getBoundingClientRect();
-      mx = ((e.clientX - rect.left) / rect.width  - .5) * 2;
-      my = ((e.clientY - rect.top)  / rect.height - .5) * 2;
-    }, { passive: true });
-  }
-
-  try {
-    const ro = new ResizeObserver(() => renderer.setSize(wrap.offsetWidth, wrap.offsetHeight));
-    ro.observe(wrap);
-  } catch(e) {}
-
-  let heroVis = true;
-  new IntersectionObserver(e => heroVis = e[0].isIntersecting, { threshold: 0 })
-    .observe(document.getElementById('hero'));
-
-  let t = 0;
-  (function animate() {
-    requestAnimationFrame(animate);
-    if (document.hidden || !heroVis) return;
-    t += reduced ? 0 : .007;
-    meshCore.rotation.y = t * .6 + mx * .12; meshCore.rotation.x = t * .35 + my * .1;
-    meshWire.rotation.y = meshCore.rotation.y; meshWire.rotation.x = meshCore.rotation.x;
-    const bob = Math.sin(t * 1.1) * .06;
-    meshCore.position.y = bob; meshWire.position.y = bob;
-    ring1.rotation.z = t * .3; ring1.rotation.x = t * .15;
-    ring2.rotation.z = -t * .2; ring2.rotation.y = t * .1;
-    pts.rotation.y = t * .04;
-    aiSprites.forEach(sp => {
-      sp.userData.angle += reduced ? 0 : sp.userData.speed * 0.012;
-      const a = sp.userData.angle;
-      const r = sp.userData.baseRadius;
-      const x = Math.cos(a) * r;
-      const z = Math.sin(a) * (r * 0.75);
-      const y = Math.sin(t * 1.25 + sp.userData.yPhase) * 0.28 + (z * 0.15);
-      sp.position.set(x, y, z);
-      sp.material.opacity = z < 0 ? 0.75 : 0.98;
-    });
-    if (!reduced) {
-      camera.position.x += (mx * .5 - camera.position.x) * .05;
-      camera.position.y += (-my * .35 - camera.position.y) * .05;
-      camera.lookAt(scene.position);
-    }
-    renderer.render(scene, camera);
-  })();
 }
-if (document.readyState === 'complete') initThree();
-else window.addEventListener('load', initThree);
+
+if (document.readyState === 'complete') initHeroVideo();
+else window.addEventListener('load', initHeroVideo);
 </script>
 </body>
 </html>
