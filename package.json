@@ -1,0 +1,13 @@
+{
+  "name": "aibin-joseph-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio of Aibin Joseph — Full-Stack Developer & AI/ML Enthusiast",
+  "private": true,
+  "dependencies": {
+    "nodemailer": "^6.9.14",
+    "xlsx": "^0.18.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
